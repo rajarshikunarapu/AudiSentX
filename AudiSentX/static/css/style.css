@@ -1,0 +1,32 @@
+*{
+    margin: 0px 0px 0px 0px;
+    padding: 0%;
+}
+.logo{
+    
+    /* background-image:url(logo.jpg); */
+    padding: 0%;
+    height: 750px;
+    width: 1519px;
+    background-size: cover;
+}
+
+.button{
+    position: absolute;
+    top: 60%;
+    left: 24%;
+    transform: translate(-50%,-50%);
+    background-color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 1.5em;
+    letter-spacing: 0.1em;
+    padding: 10px 30px;
+    transition: 0.5s;
+}
+
+textarea{
+    resize: none;
+    top: 80%;
+    left: 24%;
+}

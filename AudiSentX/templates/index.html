@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>AudiSentX</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            position: relative;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container2 {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 70px;
+            height: 40px;
+            background-size: cover;
+            margin-right: 20px;
+        }
+        /* Navbar styles */
+        .navbar {
+            background-color: #007bff;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar h1 {
+            color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-nav {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-nav li {
+            margin-right: 10px;
+        }
+        .navbar-nav li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+        .navbar-nav li a:hover {
+            background-color: #0056b3;
+        }
+        /* Main content styles */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: right;
+            padding: 20px;
+        }
+
+        .main-content2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: right;
+            padding: 20px;
+        }
+
+
+        .quote {
+            font-style: italic;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+        }
+        #output {
+            margin-top: 40px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            max-width: 80%;
+            padding: 20px;
+            background-color: #e8e8e8;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .work-culture {
+            margin-top: 50px;
+            text-align: center;
+        }
+        .work-culture h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .work-culture p {
+            font-size: 18px;
+            color: #555;
+        }
+        .footer {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+        }
+        /* Button styles */
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="container">
+            <h1>
+                <div class="logo" style="background-image: url({{ url_for('static', filename='images/final.png') }});"></div>
+                AudiSentX
+            </h1>
+            <!--<ul class="navbar-nav">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>-->
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="container">
+            <button id="startButton" class="button">Start Voice Input</button>
+            <div id="output"></div>
+        </div>
+    </div>
+    
+
+    
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 AudiSentX. All rights reserved.</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        function sendData() { 
+            console.log("enter");
+            var value = sessionStorage.getItem('data'); 
+            $.ajax({ 
+                url: '/emoji', 
+                type: 'POST', 
+                contentType: 'application/json', 
+                data: JSON.stringify({ 'value': value }),
+                success: function(response) { 
+                    console.log(response.result['emoji']);
+                    document.getElementById('output').textContent = response.result['message'] + " " + response.result['emoji'] + " Sentiment: " + response.result['sentiment'].toFixed(2); 
+                }, 
+                error: function(error) { 
+                    console.log(error); 
+                } 
+            }); 
+        } 
+
+        const startButton = document.getElementById('startButton');
+        const outputDiv = document.getElementById('output');
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            startButton.textContent = 'Listening...';
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            sessionStorage.setItem('data', transcript);
+        };
+
+        recognition.onend = () => {
+            startButton.textContent = 'Start Voice Input';
+            sendData();
+        };
+
+        startButton.addEventListener('click', () => {
+            recognition.start();
+        });
+    </script>
+</body>
+</html>
